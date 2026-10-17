@@ -53,3 +53,17 @@ loopTyping(document.querySelector('#featureTyping'), [
 ], 58, 1050);
 
 document.querySelector('#year').textContent = new Date().getFullYear();
+
+// Mostra a versao real de cada download (pedido: "nenhum mostra a versao que ta sendo baixada") -
+// busca o mesmo version.json que o app usa pra checar atualizacao, ja publicado neste repo.
+fetch('version.json?t=' + Date.now(), { cache: 'no-store' })
+  .then((res) => res.json())
+  .then((data) => {
+    const android = document.querySelector('#androidVersion');
+    const desktop = document.querySelector('#desktopVersion');
+    const footer = document.querySelector('#version');
+    if (android && data.androidVersion) android.textContent = 'v' + data.androidVersion;
+    if (desktop && data.desktopVersion) desktop.textContent = 'v' + data.desktopVersion;
+    if (footer && data.version) footer.textContent = data.version;
+  })
+  .catch(() => {});
