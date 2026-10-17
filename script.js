@@ -54,8 +54,10 @@ loopTyping(document.querySelector('#featureTyping'), [
 
 document.querySelector('#year').textContent = new Date().getFullYear();
 
-// Mostra a versao real de cada download (pedido: "nenhum mostra a versao que ta sendo baixada") -
-// busca o mesmo version.json que o app usa pra checar atualizacao, ja publicado neste repo.
+// Mostra a versao real de cada download (pedido: "nenhum mostra a versao que ta sendo baixada") e
+// aponta o link pro arquivo JA versionado (thothchat-v1.2.3.apk) em vez do nome fixo - sem isso o
+// navegador sempre baixava com o mesmo nome de sempre (thothchat.apk), empilhando "(1)", "(2)"...
+// e sem jeito de saber qual versao era qual so olhando os downloads.
 fetch('version.json?t=' + Date.now(), { cache: 'no-store' })
   .then((res) => res.json())
   .then((data) => {
@@ -65,5 +67,19 @@ fetch('version.json?t=' + Date.now(), { cache: 'no-store' })
     if (android && data.androidVersion) android.textContent = 'v' + data.androidVersion;
     if (desktop && data.desktopVersion) desktop.textContent = 'v' + data.desktopVersion;
     if (footer && data.version) footer.textContent = data.version;
+    const apkUrl = data.androidVersion
+      ? 'https://github.com/facincanitech/thoth-site/releases/download/latest/thothchat-v' + data.androidVersion + '.apk'
+      : null;
+    const exeUrl = data.desktopVersion
+      ? 'https://github.com/facincanitech/thoth-site/releases/download/latest/ThothChat-Messenger-Setup-v' + data.desktopVersion + '.exe'
+      : null;
+    ['#downloadAndroid', '#downloadAndroid2'].forEach((sel) => {
+      const el = document.querySelector(sel);
+      if (el && apkUrl) el.href = apkUrl;
+    });
+    ['#downloadWindows', '#downloadWindows2'].forEach((sel) => {
+      const el = document.querySelector(sel);
+      if (el && exeUrl) el.href = exeUrl;
+    });
   })
   .catch(() => {});
