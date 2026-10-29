@@ -54,6 +54,32 @@ loopTyping(document.querySelector('#featureTyping'), [
 
 document.querySelector('#year').textContent = new Date().getFullYear();
 
+// Numero de usuarios online na bolinha verde do topo - passa pelo mesmo proxy da Cloudflare que
+// o app usa (esconde o dominio real do Supabase), chamando a RPC publica count_online_users
+// (so' retorna um numero, sem nenhum dado pessoal).
+function refreshOnlineCount() {
+  fetch('https://thoth-api-proxy.facincanitech.workers.dev/rest/v1/rpc/count_online_users', {
+    method: 'POST',
+    headers: {
+      apikey: 'sb_publishable__dtVChf4HhsbSjY43nauBw_VjNtdLlA',
+      'Content-Type': 'application/json',
+    },
+    body: '{}',
+  })
+    .then((res) => res.json())
+    .then((count) => {
+      const el = document.querySelector('#onlineCount');
+      const plural = document.querySelector('#onlineCountPlural');
+      if (el && typeof count === 'number') {
+        el.textContent = count;
+        if (plural) plural.textContent = count === 1 ? '' : 's';
+      }
+    })
+    .catch(() => {});
+}
+refreshOnlineCount();
+setInterval(refreshOnlineCount, 30000);
+
 // Mostra a versao real de cada download (pedido: "nenhum mostra a versao que ta sendo baixada") e
 // aponta o link pro arquivo JA versionado (thothchat-v1.2.3.apk) em vez do nome fixo - sem isso o
 // navegador sempre baixava com o mesmo nome de sempre (thothchat.apk), empilhando "(1)", "(2)"...
