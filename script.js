@@ -68,11 +68,9 @@ function refreshOnlineCount() {
   })
     .then((res) => res.json())
     .then((count) => {
-      const el = document.querySelector('#onlineCount');
-      const plural = document.querySelector('#onlineCountPlural');
+      const el = document.querySelector('#onlineLabel');
       if (el && typeof count === 'number') {
-        el.textContent = count;
-        if (plural) plural.textContent = count === 1 ? '' : 's';
+        el.textContent = count + ' usuário' + (count === 1 ? '' : 's') + ' online';
       }
     })
     .catch(() => {});
