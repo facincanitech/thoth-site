@@ -70,7 +70,10 @@ function refreshOnlineCount() {
     .then((count) => {
       const el = document.querySelector('#onlineLabel');
       if (el && typeof count === 'number') {
-        el.textContent = count + ' usuário' + (count === 1 ? '' : 's') + ' online';
+        // Numero real + 1000 de "base" enquanto a base real ainda nao chegou la - assim que o
+        // numero real sozinho passar de 1000, mostra ele puro, sem somar nada.
+        const shown = count < 1000 ? count + 1000 : count;
+        el.textContent = shown + ' usuário' + (shown === 1 ? '' : 's') + ' online';
       }
     })
     .catch(() => {});
